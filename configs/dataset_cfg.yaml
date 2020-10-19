@@ -1,0 +1,17 @@
+##################################################
+# Parameters to download the dataset
+##################################################
+download_dataset:
+  save_raw_data_path: data/raw
+
+
+##################################################
+# Parameters for data processing
+##################################################
+preprocessing:
+  raw_data_path: "data/raw/"
+  processed_data_path: "data/processed/"
+  target_sr: 8000
+
+
+
