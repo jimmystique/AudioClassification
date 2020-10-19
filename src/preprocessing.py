@@ -40,6 +40,7 @@ def pad_wav_data(wav_data, target_sr):
 def preprocess_user_data_at_pth(user_data_path, processed_data_path, target_sr):
 	print(user_data_path)
 	user_df = pd.DataFrame(columns=['data', "user_id", "record_num", "label"])
+	wav_user_id = 0
 	for file in sorted(os.listdir(user_data_path)):
 		if file.endswith(".wav"):
 			wav_label, wav_user_id, wav_record_n =  os.path.splitext(file)[0].split("_")
@@ -51,7 +52,7 @@ def preprocess_user_data_at_pth(user_data_path, processed_data_path, target_sr):
 			new_row = {"data": padded_wav_data, "user_id": wav_user_id, "record_num": wav_record_n, "label": wav_label}
 			user_df = user_df.append(new_row, ignore_index=True)
 
-	pkl.dump( user_df, open("{}.pkl".format(os.path.join(processed_data_path, wav_user_id)), "wb" ) )
+	pkl.dump( user_df, open("{}.pkl".format(os.path.join(processed_data_path, str(wav_user_id))), "wb" ) )
 
 
 
@@ -72,7 +73,7 @@ if __name__ == "__main__":
 	t1 = time.time()
 
 	parser = argparse.ArgumentParser()
-	parser.add_argument("-p", "--preprocessing_cfg", default="configs/dataset_cfg.yaml", type=str, help = "Path to the preprocessing configuration file")
+	parser.add_argument("-p", "--preprocessing_cfg", default="configs/config.yaml", type=str, help = "Path to the preprocessing configuration file")
 
 	args = parser.parse_args()
 	preprocessing_cfg = yaml.safe_load(open(args.preprocessing_cfg))["preprocessing"]
