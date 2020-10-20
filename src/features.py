@@ -1,5 +1,6 @@
 import os
 import pandas as pd
+import numpy as np
 import pickle as pkl
 import argparse
 import yaml
@@ -29,7 +30,7 @@ def mfcc(audio_input_data_path, extracted_features_data_path, target_sr):
 
 def spectrogram_descriptors(spectrograms_data_files, extracted_features_data_path, target_sr):
     print('extracting spectrogram descriptors for {}'.format(spectrograms_data_files))    
-    user_df = pd.DataFrame(columns=['centroid', "bandwith", "flatness", "rolloff", "user_id", "record_num", "label"])
+    user_df = pd.DataFrame(columns=["data", "user_id", "record_num", "label"])
     audio_input_data_path = pkl.load(open(spectrograms_data_files, "rb" ))
     wav_user_id = 0
 
@@ -43,9 +44,10 @@ def spectrogram_descriptors(spectrograms_data_files, extracted_features_data_pat
         bandwith = librosa.feature.spectral_bandwidth(S=magnitude)
         flatness = librosa.feature.spectral_flatness(S=magnitude)
         rolloff = librosa.feature.spectral_rolloff(S=magnitude, sr=target_sr)
+        data = np.concatenate([centroid[0], bandwith[0], flatness[0],rolloff[0]], axis=0)
 
         wav_user_id = row[1]['user_id']
-        new_row = {"centroid": centroid[0], "bandwith": bandwith[0], "flatness": flatness[0], "rolloff": rolloff[0], "user_id": wav_user_id, "record_num": row[1]['record_num'], "label": row[1]['label']}
+        new_row = {"data": data, "user_id": wav_user_id, "record_num": row[1]['record_num'], "label": row[1]['label']}
         user_df = user_df.append(new_row, ignore_index=True)
 
     pkl.dump( user_df, open("{}.pkl".format(os.path.join(extracted_features_data_path, 'spectrogramDescriptors/', str(wav_user_id))), "wb" ) )
