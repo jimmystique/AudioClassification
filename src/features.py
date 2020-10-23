@@ -8,6 +8,8 @@ import librosa
 
 import multiprocessing
 import time 
+import datetime
+import socket
 
 '''
 extracting Mel-frequency cepstral coefficients (MFCCs) from preprocessed audio files.
@@ -67,7 +69,8 @@ def create_features(audio_input_data_path, representation_data_path, extracted_f
     t1 = time.time()
     pool.starmap(mfcc, [[file, extracted_features_data_path, target_sr] for file in processed_data_files], chunksize=1)
     t2 = time.time()
-    mfcc_time = t2-t1
+    with open("logs/logs.csv", "a") as myfile:
+        myfile.write("{:%Y-%m-%d %H:%M:%S},{},{},{},{:.2f}\n".format(datetime.datetime.now(),"extract mfcc features",socket.gethostname(),pool._processes,t2-t1))
 
     #generating spectrogram descriptors
     if not os.path.exists(extracted_features_data_path+'spectrogramDescriptors/'):
@@ -76,9 +79,8 @@ def create_features(audio_input_data_path, representation_data_path, extracted_f
     t1 = time.time()
     pool.starmap(spectrogram_descriptors, [[file, extracted_features_data_path, target_sr] for file in spectrograms_data_files], chunksize=1)
     t2 = time.time()
-    spectrogram_descriptors_time = t2-t1
-
-    return mfcc_time, spectrogram_descriptors_time
+    with open("logs/logs.csv", "a") as myfile:
+        myfile.write("{:%Y-%m-%d %H:%M:%S},{},{},{},{:.2f}\n".format(datetime.datetime.now(),"extract spectrogram descriptors",socket.gethostname(),pool._processes,t2-t1))
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
@@ -87,10 +89,4 @@ if __name__ == "__main__":
     args = parser.parse_args()
     extract_features_cfg = yaml.safe_load(open(args.extract_features_cfg))["extract_features"]
     
-    mfcc_time, spectrogram_descriptors_time = create_features(**extract_features_cfg)
-
-    print("Time elapsed to extract mfcc features: {} seconds ".format(mfcc_time))
-    print("Time elapsed to extract spectrogram descriptor features: {} seconds ".format(spectrogram_descriptors_time))
-
-    #Generating mfcc : ~190.67s using Parallel computing with n_processed = 10
-    #Extracting spectrogram descriptors : ~52.98s using Parallel computing with n_processed = 10
+    create_features(**extract_features_cfg)

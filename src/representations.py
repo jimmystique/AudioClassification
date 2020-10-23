@@ -7,6 +7,8 @@ import librosa
 
 import multiprocessing
 import time 
+import datetime
+import socket
 
 def create_spectrograms(preprocessed_audio_file, representation_data_path):
     print('creating spectograms for {}'.format(preprocessed_audio_file))    
@@ -38,9 +40,9 @@ def create_representations(input_data_path, representation_data_path):
     t1 = time.time()
     pool.starmap(create_spectrograms, [[file, representation_data_path] for file in processed_data_files], chunksize=1)
     t2 = time.time()
-    spectrogram_time = t2-t1
+    with open("logs/logs.csv", "a") as myfile:
+        myfile.write("{:%Y-%m-%d %H:%M:%S},{},{},{},{:.2f}\n".format(datetime.datetime.now(),"generate spectrograms",socket.gethostname(),pool._processes,t2-t1))
 
-    return spectrogram_time
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("-p", "--create_respresentations_cfg", default="configs/config.yaml", type=str, help = "Path to the representation creation configuration file")
@@ -48,8 +50,4 @@ if __name__ == "__main__":
     args = parser.parse_args()
     create_respresentations_cfg = yaml.safe_load(open(args.create_respresentations_cfg))["create_respresentations"]
 
-    spectrogram_time = create_representations(**create_respresentations_cfg)
-    
-    print("Time elapsed to create spectrograms: {} seconds ".format(spectrogram_time))
-
-    #Creating spectrograms : ~37.51s using Parallel computing with n_processed = 10
+    create_representations(**create_respresentations_cfg)

@@ -1,3 +1,4 @@
 # Ignore all files in this dir...
 *data/
+*models/
 *src/__pycache__/

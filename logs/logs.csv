@@ -1,0 +1,13 @@
+timestamp, action, machine name, number of processes, time(seconds)
+2020-10-23 10:51:22,generate spectrograms,WadGaduraLinux,10,53.62
+2020-10-23 10:55:39,extract mfcc features,WadGaduraLinux,10,233.78
+2020-10-23 10:56:47,extract spectrogram descriptors,WadGaduraLinux,10,68.63
+2020-10-23 11:40:09,train random forest for spectrogram,WadGaduraLinux,8,113.80
+2020-10-23 11:40:24,train random forest for mfcc,WadGaduraLinux,8,14.85
+2020-10-23 11:40:32,train random forest for spectrogram descriptors,WadGaduraLinux,8,7.34
+2020-10-23 14:11:07,train random forest for spectrogram,WadGaduraLinux,8,91.75
+2020-10-23 14:11:21,train random forest for mfcc,WadGaduraLinux,8,13.25
+2020-10-23 14:11:28,train random forest for spectrogram descriptors,WadGaduraLinux,8,6.66
+2020-10-23 14:32:50,train random forest for spectrogram,WadGaduraLinux,8,87.85
+2020-10-23 14:33:03,train random forest for mfcc,WadGaduraLinux,8,12.83
+2020-10-23 14:33:10,train random forest for spectrogram descriptors,WadGaduraLinux,8,6.19

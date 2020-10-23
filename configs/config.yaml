@@ -29,12 +29,29 @@ extract_features:
 # Parameters for training
 ##################################################
 training:
-  processed_data_path: "data/processed"
-  model_save_path: "models/model.pkl"
+  processed_data_path: *processed_data_path
   test_size: *test_size
+  model_save_path: "models/"
+  spectrogram_data_path: *representation_data_path
+  spectrogram_rf_model_save_path: &spectrogram_rf_model_save_path "models/spectrogram_rf.pkl"
+  spectrogram_rf_n_estimators: 120
+  spectrogram_rf_min_samples_split: 8
+  mfcc_data_path: &mfcc_data_path "data/features/mfcc"
+  mfcc_rf_model_save_path: &mfcc_rf_model_save_path "models/mfcc_rf.pkl"
+  mfcc_rf_n_estimators: 130
+  mfcc_rf_min_samples_split: 4
+  spectrogram_descriptors_data_path: &spectrogram_descriptors_data_path "data/features/spectrogramDescriptors"
+  spectrogram_descriptors_rf_model_save_path: &spectrogram_descriptors_rf_model_save_path "models/spectrogram_descriptors_rf.pkl"
+  spectrogram_descriptors_rf_n_estimators: 150
+  spectrogram_descriptors_rf_min_samples_split: 4
+  spectrogram_descriptors_rf_max_depth: 36
 
 evaluation:
-  load_model_path: "models/model.pkl"
   input_data_path: *processed_data_path
-
   test_size: *test_size
+  spectrogram_data_path: *representation_data_path
+  spectrogram_rf_model_save_path: *spectrogram_rf_model_save_path
+  mfcc_data_path: *mfcc_data_path
+  mfcc_rf_model_save_path: *mfcc_rf_model_save_path
+  spectrogram_descriptors_data_path: *spectrogram_descriptors_data_path
+  spectrogram_descriptors_rf_model_save_path: *spectrogram_descriptors_rf_model_save_path

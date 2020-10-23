@@ -14,19 +14,18 @@ def get_users_processed_data_filenames(path):
 
 def split_data(processed_data_path, test_size=0.33, random_state=42):
 	processed_users_data_filenames = get_users_processed_data_filenames(processed_data_path)
-	train_filenames, test_filenames = train_test_split(processed_users_data_filenames, test_size=test_size)
+	train_filenames, test_filenames = train_test_split(processed_users_data_filenames, test_size=test_size, random_state=random_state)
 	X_train, X_test, y_train, y_test = [],[],[],[]
 
 	# Use this to test
-	train_filenames = [train_filenames[0]]
+	#train_filenames = [train_filenames[0]]
 	for filename in train_filenames:
 		user_data = pkl.load(open(os.path.join(processed_data_path, filename), "rb" ))
 		X_train += list(user_data["data"])
 		y_train += list(user_data["label"])
-
 	for filename in test_filenames:
 		user_data =  pkl.load(open(os.path.join(processed_data_path, filename), "rb" ))
 		X_test += list(user_data["data"])
 		y_test += list(user_data["label"])
-	print(test_filenames)
+	#print("testing files: "+str(test_filenames))
 	return X_train, X_test, y_train, y_test
