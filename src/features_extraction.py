@@ -8,7 +8,30 @@ import pickle as pkl
 import numpy as np
 from utils import ensure_dir
 
+
+
 def chroma_stft(processed_data_path, save_path, n_processes, sr=22050, S=None,  n_fft=2048, hop_length=512, win_length=None, window='hann', center=True, pad_mode='reflect', tuning=None, n_chroma=12):
+	""" Extract chroma features using STFT on all files at processed_data_path and save the extracted features at save_path
+
+	Args:
+		processed_data_path (str): Path to the directory containing the processed data
+		save_path (str): Path to the directory where to save the extracted features
+		n_processed (int): Number of processed to run at the same time to exctract features faster
+		sr (inter): sampling rate
+		S (np.ndarray): power spectrogram 
+		norm (float or None): column-wise normalization
+		n_fft (int): FFT window size
+		hop_length (int): hop length
+		win_length (int): Each frame of audio is windowed by window(). The window will be of length win_length and then padded with zeros to match n_fft.
+		window (string, tuple, number, function, or np.ndarray [shape=(n_fft,)]): - a window specification (string, tuple, or number); see scipy.signal.get_window
+																				  - a window function, such as scipy.signal.windows.hann
+																				  - a vector or array of length n_fft
+		center (bool): - if True, the signal y is padded so that frame t is centered at y[t * hop_length].
+					   - if False, then frame t begins at y[t * hop_length]
+		pad_mode (str): If center=True, the padding mode to use at the edges of the signal. By default, STFT uses reflection padding.
+		tuning (float): Deviation from A440 tuning in fractional chroma bins. If None, it is automatically estimated.
+		n_chroma (int): Number of chroma bins to produce (12 by default).
+	"""
 	print("Extracting Chroma Features with Short Time Fourier Transform ...")
 	ensure_dir(save_path)
 	processed_data_files = sorted([f.path for f in os.scandir(processed_data_path)])
@@ -18,6 +41,25 @@ def chroma_stft(processed_data_path, save_path, n_processes, sr=22050, S=None,  
 
 
 def _chroma_stft(processed_file_path, save_path, sr, S, n_fft, hop_length, win_length, window, center, pad_mode, tuning, n_chroma):
+	""" Extract chroma features for the file at processed_file_path and save the features extracted at save_path
+	Args:
+		processed_data_path (str): Path to the directory containing the processed data
+		save_path (str): Path to the directory where to save the extracted features
+		sr (inter): sampling rate
+		S (np.ndarray): power spectrogram 
+		norm (float or None): column-wise normalization
+		n_fft (int): FFT window size
+		hop_length (int): hop length
+		win_length (int): Each frame of audio is windowed by window(). The window will be of length win_length and then padded with zeros to match n_fft.
+		window (string, tuple, number, function, or np.ndarray [shape=(n_fft,)]): - a window specification (string, tuple, or number); see scipy.signal.get_window
+																				  - a window function, such as scipy.signal.windows.hann
+																				  - a vector or array of length n_fft
+		center (bool): - if True, the signal y is padded so that frame t is centered at y[t * hop_length].
+					   - if False, then frame t begins at y[t * hop_length]
+		pad_mode (str): If center=True, the padding mode to use at the edges of the signal. By default, STFT uses reflection padding.
+		tuning (float): Deviation from A440 tuning in fractional chroma bins. If None, it is automatically estimated.
+		n_chroma (int): Number of chroma bins to produce (12 by default).
+	"""
 	processed_data = pkl.load(open(processed_file_path, "rb" ))
 	extracted_features = processed_data.copy(deep=True)
 
@@ -87,6 +129,14 @@ def _mfcc(processed_file_path, save_path, sr, S, n_mfcc, dct_type, norm, lifter)
 
 
 def extract_features(processed_data_path, save_path, n_processes, algorithm):
+	""" Extract features from files at processed_data_path and save the extracted features found at save_path
+
+	Args:
+		processed_data_path (str): Path to the directory containing the processed data
+		save_path (str): Path to the directory where to save the extracted features
+		n_processed (int): Number of processed to run at the same time to exctract features faster
+		algorithm (dict): Dictionary containing a key "name" (corresponding to the name of a function that will be call to build a model) and a key "args" containing the hyperparameters of the model to be built.
+	"""
 	print(processed_data_path)
 	print(algorithm)
 
@@ -98,7 +148,7 @@ def extract_features(processed_data_path, save_path, n_processes, algorithm):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("-e", "--config_file", default="configs/config.yaml", type=str, help = "Path to the feature extraction configuration file")
+    parser.add_argument("-e", "--config_file", default="configs/config.yaml", type=str, help = "Path to the configuration file")
 
     args = parser.parse_args()
     features_extraction_cfg = yaml.safe_load(open(args.config_file))["features_extraction"]

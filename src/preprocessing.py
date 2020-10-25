@@ -73,7 +73,7 @@ if __name__ == "__main__":
 	t1 = time.time()
 
 	parser = argparse.ArgumentParser()
-	parser.add_argument("-p", "--preprocessing_cfg", default="configs/config.yaml", type=str, help = "Path to the preprocessing configuration file")
+	parser.add_argument("-p", "--preprocessing_cfg", default="configs/config.yaml", type=str, help = "Path to the configuration file")
 
 	args = parser.parse_args()
 	preprocessing_cfg = yaml.safe_load(open(args.preprocessing_cfg))["preprocessing"]

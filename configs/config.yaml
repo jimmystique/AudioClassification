@@ -1,37 +1,42 @@
 seed: 42
 test_size: &test_size 0.33
 
-##################################################
+#####################################################################################################
+#
 # Parameters to download the dataset
-##################################################
+#
+#####################################################################################################
 download_dataset:
   save_raw_data_path: data/raw
 
-##################################################
+
+
+
+
+#####################################################################################################
+#
 # Parameters for data processing
-##################################################
+#
+#####################################################################################################
 preprocessing:
   raw_data_path: "data/raw/"
   preprocessed_data_path: &processed_data_path "data/preprocessed/"
   target_sr: 8000
 
-create_respresentations:
-  input_data_path: *processed_data_path
-  representation_data_path: &representation_data_path "data/spectrograms/"
-
-extract_features:
-  audio_input_data_path: *processed_data_path
-  representation_data_path: *representation_data_path
-  extracted_features_data_path: "data/features/"
-  target_sr: 8000
 
 
 
+#####################################################################################################
+#
+# Parameters for features extraction
+#
+#####################################################################################################
 
 features_extraction:
-  #########################################################################################
+  ##############################################################################
   # Parameters to extract Chroma features using Short Time Fourier Transform 
-  #########################################################################################
+  ##############################################################################
+  
   # processed_data_path: *processed_data_path
   # n_processes: 1
   # save_path: data/extracted_features/chroma_stft
@@ -42,9 +47,10 @@ features_extraction:
   #     hop_length: 512
 
 
-  #########################################################################################
+  ##############################################################################
   # Parameters to extract features using Root Mean Square
-  #########################################################################################
+  ##############################################################################
+
   # processed_data_path: *processed_data_path
   # save_path: data/extracted_features/root_mean_square
   # n_processes: 1
@@ -55,9 +61,10 @@ features_extraction:
   #     hop_length: 512
 
 
-  #########################################################################################
+  ##############################################################################
   # Parameters to extract features using MFCC
-  #########################################################################################
+  ##############################################################################
+
   processed_data_path: *processed_data_path
   n_processes: 10
   save_path: data/extracted_features/mfcc
@@ -71,33 +78,20 @@ features_extraction:
 
 
 
-##################################################
-# Parameters for training
-##################################################
-training:
-  processed_data_path: *processed_data_path
-  test_size: *test_size
-  model_save_path: "models/"
-  spectrogram_data_path: *representation_data_path
-  spectrogram_rf_model_save_path: &spectrogram_rf_model_save_path "models/spectrogram_rf.pkl"
-  spectrogram_rf_n_estimators: 120
-  spectrogram_rf_min_samples_split: 8
-  mfcc_data_path: &mfcc_data_path "data/features/mfcc"
-  mfcc_rf_model_save_path: &mfcc_rf_model_save_path "models/mfcc_rf.pkl"
-  mfcc_rf_n_estimators: 130
-  mfcc_rf_min_samples_split: 4
-  spectrogram_descriptors_data_path: &spectrogram_descriptors_data_path "data/features/spectrogramDescriptors"
-  spectrogram_descriptors_rf_model_save_path: &spectrogram_descriptors_rf_model_save_path "models/spectrogram_descriptors_rf.pkl"
-  spectrogram_descriptors_rf_n_estimators: 150
-  spectrogram_descriptors_rf_min_samples_split: 4
-  spectrogram_descriptors_rf_max_depth: 36
+#####################################################################################################
+#
+# Parameters for features based training:
+#
+#####################################################################################################
+features_based_training:
+  # path_to_data: data/extracted_features/mfcc
+  # path_to_data: data/extracted_features/chroma_stft
+  path_to_data: data/extracted_features/root_mean_square
+  save_model_path: models/test_model.pkl
+  algorithm:
+    name: random_forest
+    args:
+      n_estimators: 100
 
-evaluation:
-  input_data_path: *processed_data_path
-  test_size: *test_size
-  spectrogram_data_path: *representation_data_path
-  spectrogram_rf_model_save_path: *spectrogram_rf_model_save_path
-  mfcc_data_path: *mfcc_data_path
-  mfcc_rf_model_save_path: *mfcc_rf_model_save_path
-  spectrogram_descriptors_data_path: *spectrogram_descriptors_data_path
-  spectrogram_descriptors_rf_model_save_path: *spectrogram_descriptors_rf_model_save_path
+
+
