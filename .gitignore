@@ -1,4 +1,11 @@
 # Ignore all files in this dir...
-*data/
-*models/
 *src/__pycache__/
+models/*
+!models/.gitkeep
+data/*
+!data/.gitkeep 
+*logs/
+!logs/.gitkeep
+
+
+

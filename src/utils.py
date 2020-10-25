@@ -29,3 +29,14 @@ def split_data(processed_data_path, test_size=0.33, random_state=42):
 		y_test += list(user_data["label"])
 	#print("testing files: "+str(test_filenames))
 	return X_train, X_test, y_train, y_test
+
+
+
+
+def ensure_dir(path_to_dir, remove_if_exists = False):
+    if remove_if_exists and os.path.exists(path_to_dir) and os.path.isdir(path_to_dir):
+        shutil.rmtree(path_to_dir)
+        
+    if not os.path.exists(path_to_dir):
+        os.makedirs(path_to_dir)
+

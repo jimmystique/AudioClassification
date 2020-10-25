@@ -12,7 +12,7 @@ download_dataset:
 ##################################################
 preprocessing:
   raw_data_path: "data/raw/"
-  processed_data_path: &processed_data_path "data/processed/"
+  preprocessed_data_path: &processed_data_path "data/preprocessed/"
   target_sr: 8000
 
 create_respresentations:
@@ -24,6 +24,52 @@ extract_features:
   representation_data_path: *representation_data_path
   extracted_features_data_path: "data/features/"
   target_sr: 8000
+
+
+
+
+features_extraction:
+  #########################################################################################
+  # Parameters to extract Chroma features using Short Time Fourier Transform 
+  #########################################################################################
+  # processed_data_path: *processed_data_path
+  # n_processes: 1
+  # save_path: data/extracted_features/chroma_stft
+  # algorithm: 
+  #   name: chroma_stft
+  #   args:
+  #     n_fft: 2048
+  #     hop_length: 512
+
+
+  #########################################################################################
+  # Parameters to extract features using Root Mean Square
+  #########################################################################################
+  # processed_data_path: *processed_data_path
+  # save_path: data/extracted_features/root_mean_square
+  # n_processes: 1
+  # algorithm: 
+  #   name: root_mean_square
+  #   args:
+  #     frame_length: 2048
+  #     hop_length: 512
+
+
+  #########################################################################################
+  # Parameters to extract features using MFCC
+  #########################################################################################
+  processed_data_path: *processed_data_path
+  n_processes: 10
+  save_path: data/extracted_features/mfcc
+  algorithm: 
+    name: mfcc
+    args:
+      n_mfcc: 20
+      dct_type: 2
+
+
+
+
 
 ##################################################
 # Parameters for training

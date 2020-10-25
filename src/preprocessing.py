@@ -37,7 +37,7 @@ def pad_wav_data(wav_data, target_sr):
 
 
 
-def preprocess_user_data_at_pth(user_data_path, processed_data_path, target_sr):
+def preprocess_user_data_at_pth(user_data_path, preprocessed_data_path, target_sr):
 	print(user_data_path)
 	user_df = pd.DataFrame(columns=['data', "user_id", "record_num", "label"])
 	wav_user_id = 0
@@ -52,19 +52,19 @@ def preprocess_user_data_at_pth(user_data_path, processed_data_path, target_sr):
 			new_row = {"data": padded_wav_data, "user_id": wav_user_id, "record_num": wav_record_n, "label": wav_label}
 			user_df = user_df.append(new_row, ignore_index=True)
 
-	pkl.dump( user_df, open("{}.pkl".format(os.path.join(processed_data_path, str(wav_user_id))), "wb" ) )
+	pkl.dump( user_df, open("{}_preprocessed.pkl".format(os.path.join(preprocessed_data_path, str(wav_user_id))), "wb" ) )
 
 
 
-def preprocess(raw_data_path, processed_data_path, target_sr):
-	#Create processed_data_path if the directory does not exist
-	if not os.path.exists(processed_data_path):
-		os.makedirs(processed_data_path)
+def preprocess(raw_data_path, preprocessed_data_path, target_sr):
+	#Create preprocessed_data_path if the directory does not exist
+	if not os.path.exists(preprocessed_data_path):
+		os.makedirs(preprocessed_data_path)
 
-	users_data_path = sorted([f.path for f in os.scandir(raw_data_path) if f.is_dir()])
+	users_data_path = sorted([folder.path for folder in os.scandir(raw_data_path) if folder.is_dir() and any(file.endswith(".wav") for file in os.listdir(folder))])
 	print(users_data_path)
 	pool=multiprocessing.Pool(processes=10)
-	pool.starmap(preprocess_user_data_at_pth, [[folder, processed_data_path, target_sr] for folder in users_data_path], chunksize=1)
+	pool.starmap(preprocess_user_data_at_pth, [[folder, preprocessed_data_path, target_sr] for folder in users_data_path if os.path.isdir(folder)], chunksize=1)
 
 
 
