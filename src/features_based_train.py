@@ -4,11 +4,15 @@ import os
 from utils import split_data
 from sklearn.ensemble import RandomForestClassifier
 import numpy as np
+import pickle as pkl
+
+import time 
+import datetime
+import socket
 
 
-
-def random_forest(X_train, y_train, n_estimators=100, criterion='gini', max_depth=None):
-	model = RandomForestClassifier()
+def random_forest(X_train, y_train, n_estimators=100, criterion='gini', max_depth=None, n_jobs=1):
+	model = RandomForestClassifier(n_jobs=n_jobs)
 	model.fit(X_train, y_train)
 	return model
 
@@ -31,8 +35,22 @@ def features_based_model_train(path_to_data, save_model_path, algorithm):
 	X_train = [sample.flatten() for sample in X_train]
 	X_test = [sample.flatten() for sample in X_test]
 
+	t1 = time.time()
 	model = globals()[algorithm["name"]](X_train, y_train, **algorithm["args"])
+	t2 = time.time()
 
+	if algorithm["args"]["n_jobs"] == -1:
+		n_jobs = os.cpu_count()
+	else:
+		n_jobs = algorithm["args"]["n_jobs"]
+
+	feature_name = path_to_data.split("/")
+
+	with open("logs/logs.csv", "a") as myfile:
+		myfile.write("{:%Y-%m-%d %H:%M:%S},Training {} for {},{},{},{:.2f}\n".format(datetime.datetime.now(),algorithm["name"],feature_name[2],socket.gethostname(),n_jobs,t2-t1))
+
+
+	pkl.dump(model, open("{}{}_{}.pkl".format(save_model_path,algorithm["name"],feature_name[2]), "wb" )) 
 	print_testing_training_accuracies(model, X_train, y_train, X_test, y_test)
 
 
@@ -45,6 +63,5 @@ if __name__ == "__main__":
 
 	args = parser.parse_args()
 	features_based_training = yaml.safe_load(open(args.config_file))["features_based_training"]
-		
 
 	features_based_model_train(**features_based_training)

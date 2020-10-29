@@ -1,0 +1,19 @@
+timestamp,action,machine name,number of processes,time(seconds)
+2020-10-29 12:21:30,data preprocessing,WadGaduraLinux,10,115.43
+2020-10-29 12:27:44,extract chroma_stft features,WadGaduraLinux,10,124.57
+2020-10-29 12:28:07,extract root_mean_square features,WadGaduraLinux,10,6.29
+2020-10-29 12:30:36,extract mfcc features,WadGaduraLinux,10,128.66
+2020-10-29 12:31:42,extract spectrogram features,WadGaduraLinux,10,18.65
+2020-10-29 12:32:03,extract spectrogram_centroid features,WadGaduraLinux,10,17.21
+2020-10-29 12:32:29,extract spectrogram_bandwith features,WadGaduraLinux,10,20.99
+2020-10-29 12:32:53,extract spectrogram_flatness features,WadGaduraLinux,10,18.40
+2020-10-29 12:33:18,extract spectrogram_rolloff features,WadGaduraLinux,10,16.36
+2020-10-29 12:33:48,Training random_forest for mfcc,WadGaduraLinux,8,7.58
+2020-10-29 12:34:17,Training random_forest for chroma_stft,WadGaduraLinux,8,5.77
+2020-10-29 12:34:27,Training random_forest for root_mean_square,WadGaduraLinux,8,2.15
+2020-10-29 12:35:53,Training random_forest for spectrogram,WadGaduraLinux,8,76.94
+2020-10-29 12:36:03,Training random_forest for spectrogram_centroid,WadGaduraLinux,8,2.05
+2020-10-29 12:36:08,Training random_forest for spectrogram_bandwith,WadGaduraLinux,8,1.95
+2020-10-29 12:36:15,Training random_forest for spectrogram_flatness,WadGaduraLinux,8,2.15
+2020-10-29 12:36:24,Training random_forest for spectrogram_rolloff,WadGaduraLinux,8,1.65
+2020-10-29 12:44:00,Training random_forest for spectrogram_rolloff,WadGaduraLinux,8,1.36

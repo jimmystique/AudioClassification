@@ -1,5 +1,6 @@
-from librosa.feature import chroma_stft, rms, mfcc, spectral_centroid
+from librosa.feature import chroma_stft, rms, mfcc, spectral_centroid, spectral_bandwidth, spectral_flatness, spectral_rolloff		
 from librosa import feature
+from librosa import stft, amplitude_to_db, magphase
 import argparse
 import yaml
 import os
@@ -8,7 +9,9 @@ import pickle as pkl
 import numpy as np
 from utils import ensure_dir
 
-
+import time 
+import datetime
+import socket
 
 def chroma_stft(processed_data_path, save_path, n_processes, sr=22050, S=None,  n_fft=2048, hop_length=512, win_length=None, window='hann', center=True, pad_mode='reflect', tuning=None, n_chroma=12):
 	""" Extract chroma features using STFT on all files at processed_data_path and save the extracted features at save_path
@@ -124,8 +127,129 @@ def _mfcc(processed_file_path, save_path, sr, S, n_mfcc, dct_type, norm, lifter)
 	print("- MFCC features extraction on {} Saved in {}".format(processed_file_path, save_file_path))
 
 
- 
 
+def spectrogram(processed_data_path, save_path, n_processes, n_fft=2048, hop_length=512, win_length=None, window='hann', center=True, pad_mode='reflect'):
+	print("Generating spectrograms ...")
+	ensure_dir(save_path)
+	processed_data_files = sorted([f.path for f in os.scandir(processed_data_path)])
+	print(processed_data_files)
+	pool=multiprocessing.Pool(processes=n_processes)
+	pool.starmap(_spectrogram, [[processed_file_path, save_path, n_fft, hop_length, win_length, window, center, pad_mode] for processed_file_path in processed_data_files], chunksize=1)
+
+
+
+def _spectrogram(processed_file_path, save_path, n_fft, hop_length, win_length, window, center, pad_mode):
+	processed_data = pkl.load(open(processed_file_path, "rb" ))
+	extracted_features = processed_data.copy(deep=True)
+
+	for index, row in processed_data.iterrows():
+		data = row["data"]
+		audio_data_stft_format = stft(y=data, n_fft=n_fft, hop_length=hop_length, win_length=win_length, window=window, center=center, pad_mode=pad_mode)
+		data_extracted_features= amplitude_to_db(abs(audio_data_stft_format))
+		extracted_features.loc[index, "data"] = data_extracted_features
+	save_filename = "{}_spectrogram.pkl".format(os.path.splitext(os.path.basename(processed_file_path))[0].split("_")[0])
+	save_file_path = os.path.join(save_path, save_filename)
+	pkl.dump(extracted_features, open(save_file_path, "wb" ) )
+	print("- Generating spectrogram on {} Saved in {}".format(processed_file_path, save_file_path))
+
+
+
+def spectrogram_centroid(processed_data_path, save_path, n_processes, sr=22050, n_fft=2048, hop_length=512, win_length=None, window='hann', center=True, pad_mode='reflect'):
+	print("Extracting spectrogram centroid...")
+	ensure_dir(save_path)
+	processed_data_files = sorted([f.path for f in os.scandir(processed_data_path)])
+	print(processed_data_files)
+	pool=multiprocessing.Pool(processes=n_processes)
+	pool.starmap(_spectrogram_centroid, [[processed_file_path, save_path, sr, n_fft, hop_length, win_length, window, center, pad_mode] for processed_file_path in processed_data_files], chunksize=1)
+
+
+
+def _spectrogram_centroid(processed_file_path, save_path, sr, n_fft, hop_length, win_length, window, center, pad_mode):
+	processed_data = pkl.load(open(processed_file_path, "rb" ))
+	extracted_features = processed_data.copy(deep=True)
+
+	for index, row in processed_data.iterrows():
+		data = row["data"]
+		data_extracted_features= spectral_centroid(data, sr=sr, n_fft=n_fft, hop_length=hop_length, win_length=win_length, window=window, center=center, pad_mode=pad_mode)
+		extracted_features.loc[index, "data"] = data_extracted_features
+	save_filename = "{}_spectrogram_centroid.pkl".format(os.path.splitext(os.path.basename(processed_file_path))[0].split("_")[0])
+	save_file_path = os.path.join(save_path, save_filename)
+	pkl.dump(extracted_features, open(save_file_path, "wb" ) )
+	print("- Extracting spectrogram centroid on {} Saved in {}".format(processed_file_path, save_file_path))
+
+
+def spectrogram_bandwith(processed_data_path, save_path, n_processes, sr=22050, n_fft=2048, hop_length=512, win_length=None, window='hann', center=True, pad_mode='reflect'):
+	print("Extracting spectrogram bandwith...")
+	ensure_dir(save_path)
+	processed_data_files = sorted([f.path for f in os.scandir(processed_data_path)])
+	print(processed_data_files)
+	pool=multiprocessing.Pool(processes=n_processes)
+	pool.starmap(_spectrogram_bandiwth, [[processed_file_path, save_path, sr, n_fft, hop_length, win_length, window, center, pad_mode] for processed_file_path in processed_data_files], chunksize=1)
+
+
+
+def _spectrogram_bandiwth(processed_file_path, save_path, sr, n_fft, hop_length, win_length, window, center, pad_mode):
+	processed_data = pkl.load(open(processed_file_path, "rb" ))
+	extracted_features = processed_data.copy(deep=True)
+
+	for index, row in processed_data.iterrows():
+		data = row["data"]
+		data_extracted_features= spectral_bandwidth(data, sr=sr, n_fft=n_fft, hop_length=hop_length, win_length=win_length, window=window, center=center, pad_mode=pad_mode)
+		extracted_features.loc[index, "data"] = data_extracted_features
+	save_filename = "{}_spectrogram_bandwith.pkl".format(os.path.splitext(os.path.basename(processed_file_path))[0].split("_")[0])
+	save_file_path = os.path.join(save_path, save_filename)
+	pkl.dump(extracted_features, open(save_file_path, "wb" ) )
+	print("- Extracting spectrogram bandwith on {} Saved in {}".format(processed_file_path, save_file_path))
+
+
+
+def spectrogram_flatness(processed_data_path, save_path, n_processes, n_fft=2048, hop_length=512, win_length=None, window='hann', center=True, pad_mode='reflect'):
+	print("Extracting spectrogram flatness...")
+	ensure_dir(save_path)
+	processed_data_files = sorted([f.path for f in os.scandir(processed_data_path)])
+	print(processed_data_files)
+	pool=multiprocessing.Pool(processes=n_processes)
+	pool.starmap(_spectrogram_flatness, [[processed_file_path, save_path, n_fft, hop_length, win_length, window, center, pad_mode] for processed_file_path in processed_data_files], chunksize=1)
+
+
+
+def _spectrogram_flatness(processed_file_path, save_path, n_fft, hop_length, win_length, window, center, pad_mode):
+	processed_data = pkl.load(open(processed_file_path, "rb" ))
+	extracted_features = processed_data.copy(deep=True)
+
+	for index, row in processed_data.iterrows():
+		data = row["data"]
+		data_extracted_features= spectral_flatness(data, n_fft=n_fft, hop_length=hop_length, win_length=win_length, window=window, center=center, pad_mode=pad_mode)
+		extracted_features.loc[index, "data"] = data_extracted_features
+	save_filename = "{}_spectrogram_flatness.pkl".format(os.path.splitext(os.path.basename(processed_file_path))[0].split("_")[0])
+	save_file_path = os.path.join(save_path, save_filename)
+	pkl.dump(extracted_features, open(save_file_path, "wb" ) )
+	print("- Extracting spectrogram flatness on {} Saved in {}".format(processed_file_path, save_file_path))
+
+
+
+def spectrogram_rolloff(processed_data_path, save_path, n_processes, sr=22050, n_fft=2048, hop_length=512, win_length=None, window='hann', center=True, pad_mode='reflect'):
+	print("Extracting spectrogram bandwith...")
+	ensure_dir(save_path)
+	processed_data_files = sorted([f.path for f in os.scandir(processed_data_path)])
+	print(processed_data_files)
+	pool=multiprocessing.Pool(processes=n_processes)
+	pool.starmap(_spectrogram_rolloff, [[processed_file_path, save_path, sr, n_fft, hop_length, win_length, window, center, pad_mode] for processed_file_path in processed_data_files], chunksize=1)
+
+
+
+def _spectrogram_rolloff(processed_file_path, save_path, sr, n_fft, hop_length, win_length, window, center, pad_mode):
+	processed_data = pkl.load(open(processed_file_path, "rb" ))
+	extracted_features = processed_data.copy(deep=True)
+
+	for index, row in processed_data.iterrows():
+		data = row["data"]
+		data_extracted_features= spectral_rolloff(data, sr=sr, n_fft=n_fft, hop_length=hop_length, win_length=win_length, window=window, center=center, pad_mode=pad_mode)
+		extracted_features.loc[index, "data"] = data_extracted_features
+	save_filename = "{}_spectrogram_rolloff.pkl".format(os.path.splitext(os.path.basename(processed_file_path))[0].split("_")[0])
+	save_file_path = os.path.join(save_path, save_filename)
+	pkl.dump(extracted_features, open(save_file_path, "wb" ) )
+	print("- Extracting spectrogram rolloff on {} Saved in {}".format(processed_file_path, save_file_path))
 
 
 def extract_features(processed_data_path, save_path, n_processes, algorithm):
@@ -140,9 +264,11 @@ def extract_features(processed_data_path, save_path, n_processes, algorithm):
 	print(processed_data_path)
 	print(algorithm)
 
+	t1 = time.time()
 	globals()[algorithm["name"]](processed_data_path, save_path, n_processes, **algorithm["args"])
-
-
+	t2 = time.time()
+	with open("logs/logs.csv", "a") as myfile:
+		myfile.write("{:%Y-%m-%d %H:%M:%S},extract {} features,{},{},{:.2f}\n".format(datetime.datetime.now(),algorithm["name"],socket.gethostname(),n_processes,t2-t1))
 
 
 

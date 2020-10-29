@@ -10,6 +10,10 @@ import scipy
 from scipy.io import wavfile
 import multiprocessing
 
+import time 
+import datetime
+import socket
+
 
 def resample_wav_data(wav_data, orig_sr, target_sr):
 	""" Resample wav_data from sampling rate equals to orig_sr to a new sampling rate equals to target_sr
@@ -56,31 +60,32 @@ def preprocess_user_data_at_pth(user_data_path, preprocessed_data_path, target_s
 
 
 
-def preprocess(raw_data_path, preprocessed_data_path, target_sr):
+def preprocess(raw_data_path, preprocessed_data_path, target_sr, n_process):
 	#Create preprocessed_data_path if the directory does not exist
 	if not os.path.exists(preprocessed_data_path):
 		os.makedirs(preprocessed_data_path)
 
 	users_data_path = sorted([folder.path for folder in os.scandir(raw_data_path) if folder.is_dir() and any(file.endswith(".wav") for file in os.listdir(folder))])
 	print(users_data_path)
-	pool=multiprocessing.Pool(processes=10)
+	pool=multiprocessing.Pool(n_process)
 	pool.starmap(preprocess_user_data_at_pth, [[folder, preprocessed_data_path, target_sr] for folder in users_data_path if os.path.isdir(folder)], chunksize=1)
 
 
 
 if __name__ == "__main__":
-	import time 
-	t1 = time.time()
-
 	parser = argparse.ArgumentParser()
 	parser.add_argument("-p", "--preprocessing_cfg", default="configs/config.yaml", type=str, help = "Path to the configuration file")
 
 	args = parser.parse_args()
 	preprocessing_cfg = yaml.safe_load(open(args.preprocessing_cfg))["preprocessing"]
 
+	t1 = time.time()
 	preprocess(**preprocessing_cfg)
-
 	t2 = time.time()
+
+	with open("logs/logs.csv", "a") as myfile:
+		myfile.write("{:%Y-%m-%d %H:%M:%S},data preprocessing,{},{},{:.2f}\n".format(datetime.datetime.now(),socket.gethostname(),preprocessing_cfg['n_process'],t2-t1))
+
 	print("Time elapsed for data processing: {} seconds ".format(t2-t1))
 
 	#Preprocessing : ~113s using Parallel computing with n_processed = 10 and resampling with scipys
