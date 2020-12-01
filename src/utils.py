@@ -18,8 +18,8 @@ def split_data(processed_data_path, test_size=0.33, random_state=42, validation_
 	# Use this to test
 	#train_filenames = [train_filenames[0]]
 	if validation_set:
-		train_valid_filenames, test_filenames = train_test_split(processed_users_data_filenames, test_size=test_size)
-		train_filenames, valid_filenames = train_test_split(train_valid_filenames, test_size=validation_size)
+		train_valid_filenames, test_filenames = train_test_split(processed_users_data_filenames, test_size=test_size, random_state=random_state)
+		train_filenames, valid_filenames = train_test_split(train_valid_filenames, test_size=validation_size, random_state=random_state)
 		X_train, X_test, X_valid, y_train, y_test, y_valid = [],[],[],[],[],[]
 
 		for filename in train_filenames:
