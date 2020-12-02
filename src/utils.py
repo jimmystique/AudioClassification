@@ -12,23 +12,48 @@ def get_users_processed_data_filenames(path):
 	return processed_data_paths
 
 
-def split_data(processed_data_path, test_size=0.33, random_state=42):
+def split_data(processed_data_path, test_size=0.33, random_state=42, validation_size=0.2,  validation_set=False):
 	processed_users_data_filenames = get_users_processed_data_filenames(processed_data_path)
-	train_filenames, test_filenames = train_test_split(processed_users_data_filenames, test_size=test_size, random_state=random_state)
-	X_train, X_test, y_train, y_test = [],[],[],[]
 
 	# Use this to test
 	#train_filenames = [train_filenames[0]]
-	for filename in train_filenames:
-		user_data = pkl.load(open(os.path.join(processed_data_path, filename), "rb" ))
-		X_train += list(user_data["data"])
-		y_train += list(user_data["label"])
-	for filename in test_filenames:
-		user_data =  pkl.load(open(os.path.join(processed_data_path, filename), "rb" ))
-		X_test += list(user_data["data"])
-		y_test += list(user_data["label"])
-	#print("testing files: "+str(test_filenames))
-	return X_train, X_test, y_train, y_test
+	if validation_set:
+		train_valid_filenames, test_filenames = train_test_split(processed_users_data_filenames, test_size=test_size, random_state=random_state)
+		train_filenames, valid_filenames = train_test_split(train_valid_filenames, test_size=validation_size, random_state=random_state)
+		X_train, X_test, X_valid, y_train, y_test, y_valid = [],[],[],[],[],[]
+
+		for filename in train_filenames:
+			user_data = pkl.load(open(os.path.join(processed_data_path, filename), "rb" ))
+			X_train += list(user_data["data"])
+			y_train += list(user_data["label"])
+
+		for filename in test_filenames:
+			user_data =  pkl.load(open(os.path.join(processed_data_path, filename), "rb" ))
+			X_test += list(user_data["data"])
+			y_test += list(user_data["label"])
+
+		for filename in valid_filenames:
+			user_data =  pkl.load(open(os.path.join(processed_data_path, filename), "rb" ))
+			X_valid += list(user_data["data"])
+			y_valid += list(user_data["label"])
+
+		return X_train, X_test, X_valid, y_train, y_test, y_valid
+
+	else:
+		train_filenames, test_filenames = train_test_split(processed_users_data_filenames, test_size=test_size, random_state=random_state)
+		X_train, X_test, y_train, y_test = [],[],[],[]
+
+		for filename in train_filenames:
+			user_data = pkl.load(open(os.path.join(processed_data_path, filename), "rb" ))
+			X_train += list(user_data["data"])
+			y_train += list(user_data["label"])
+
+		for filename in test_filenames:
+			user_data =  pkl.load(open(os.path.join(processed_data_path, filename), "rb" ))
+			X_test += list(user_data["data"])
+			y_test += list(user_data["label"])
+
+		return X_train, X_test, y_train, y_test
 
 
 
