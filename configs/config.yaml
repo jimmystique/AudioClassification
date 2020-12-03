@@ -195,9 +195,10 @@ deep_learning_based_training:
   epochs: 1
   algorithm:
     # name: audionet
-    name: fast_cnn
+    # name: fast_cnn
+    name: scattering_transform1d
     args:
-      n_classes: 2
+      n_classes: 10
       sequence_length: 8000
 
 

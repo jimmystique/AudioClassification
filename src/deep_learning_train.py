@@ -9,6 +9,7 @@ import tensorflow as tf
 import os
 import pandas as pd
 from sklearn.metrics import accuracy_score
+from kymatio.keras import Scattering1D
 
 
 #Shapes list:
@@ -78,6 +79,20 @@ def audionet(n_classes=10, sequence_length=8000, pool_size=2, pool_strides=2):
 
 	return model
 
+
+def scattering_transform1d(n_classes, sequence_length):
+	""" Scattering transform
+	"""
+	log_eps = 1e-6
+	x_in = layers.Input(shape=(sequence_length))
+	x = Scattering1D(8, 12)(x_in)
+	x = layers.Lambda(lambda x: x[..., 1:, :])(x)
+	x = layers.Lambda(lambda x: tf.math.log(tf.abs(x) + log_eps))(x)
+	x = layers.GlobalAveragePooling1D(data_format='channels_first')(x)
+	x = layers.BatchNormalization(axis=1)(x)
+	x_out = layers.Dense(n_classes, activation='softmax')(x)
+	model = tf.keras.models.Model(x_in, x_out)
+	return model
 
 
 def train_dl_model(path_to_data, save_model_path, epochs, algorithm):
