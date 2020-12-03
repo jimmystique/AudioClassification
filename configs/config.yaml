@@ -144,38 +144,60 @@ features_based_training:
   ##############################################################################
   # Parameters to train models with Random Forest
   ##############################################################################
-  #path_to_data: data/extracted_features/mfcc
-  #path_to_data: data/extracted_features/chroma_stft
-  #path_to_data: data/extracted_features/root_mean_square
-  #path_to_data: data/extracted_features/spectrogram
-  #path_to_data: data/extracted_features/spectrogram_centroid
-  #path_to_data: data/extracted_features/spectrogram_bandwith
-  #path_to_data: data/extracted_features/spectrogram_flatness
-  #path_to_data: data/extracted_features/spectrogram_rolloff
-  #save_model_path: models/
-  #algorithm:
-  #  name: random_forest
-  #  args:
-  #    n_estimators: 100
-  #    n_jobs: -1
+  path_to_data: data/extracted_features/mfcc
+  # path_to_data: data/extracted_features/chroma_stft
+  # path_to_data: data/extracted_features/root_mean_square
+  # path_to_data: data/extracted_features/spectrogram
+  # path_to_data: data/extracted_features/spectrogram_centroid
+  # path_to_data: data/extracted_features/spectrogram_bandwith
+  # path_to_data: data/extracted_features/spectrogram_flatness
+  # path_to_data: data/extracted_features/spectrogram_rolloff
+  save_model_path: models/
+  algorithm:
+   name: random_forest
+   args:
+     n_estimators: 100
+     n_jobs: -1
 
   ##############################################################################
   # Parameters to train models with AlexNet
   ##############################################################################
-  path_to_data: data/extracted_features/mfcc
-  #path_to_data: data/extracted_features/chroma_stft
-  #path_to_data: data/extracted_features/root_mean_square
-  #path_to_data: data/extracted_features/spectrogram
-  #path_to_data: data/extracted_features/spectrogram_centroid
-  #path_to_data: data/extracted_features/spectrogram_bandwith
-  #path_to_data: data/extracted_features/spectrogram_flatness
-  #path_to_data: data/extracted_features/spectrogram_rolloff
-  save_model_path: models/
+  # path_to_data: data/extracted_features/mfcc
+  # #path_to_data: data/extracted_features/chroma_stft
+  # #path_to_data: data/extracted_features/root_mean_square
+  # #path_to_data: data/extracted_features/spectrogram
+  # #path_to_data: data/extracted_features/spectrogram_centroid
+  # #path_to_data: data/extracted_features/spectrogram_bandwith
+  # #path_to_data: data/extracted_features/spectrogram_flatness
+  # #path_to_data: data/extracted_features/spectrogram_rolloff
+  # save_model_path: models/
+  # algorithm:
+  #   name: AlexNet
+  #   args:
+  #     input_size: [150, 150, 1]
+  #     n_classes: 10
+  #     epochs: 1
+  #     test_size: 0.33
+  #     validation_size: 0.2
+
+
+deep_learning_based_training:
+  path_to_data: data/preprocessed
+  # path_to_data: data/extracted_features/mfcc
+  # path_to_data: data/extracted_features/chroma_stft
+  # path_to_data: data/extracted_features/root_mean_square
+  # path_to_data: data/extracted_features/spectrogram
+  # path_to_data: data/extracted_features/spectrogram_centroid
+  # path_to_data: data/extracted_features/spectrogram_bandwith
+  # path_to_data: data/extracted_features/spectrogram_flatness
+  # path_to_data: data/extracted_features/spectrogram_rolloff
+  save_model_path: models/fast_cnn
+  epochs: 1
   algorithm:
-    name: AlexNet
+    # name: audionet
+    name: fast_cnn
     args:
-      input_size: [224, 224, 1]
-      n_classes: 10
-      epochs: 1
-      test_size: 0.33
-      validation_size: 0.2
+      n_classes: 2
+      sequence_length: 8000
+
+
