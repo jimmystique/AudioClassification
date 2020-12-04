@@ -182,7 +182,8 @@ features_based_training:
 
 
 deep_learning_based_training:
-  path_to_data: data/preprocessed
+  # path_to_data: data/preprocessed
+  path_to_data: data/scattering_preprocessed
   # path_to_data: data/extracted_features/mfcc
   # path_to_data: data/extracted_features/chroma_stft
   # path_to_data: data/extracted_features/root_mean_square
@@ -191,11 +192,14 @@ deep_learning_based_training:
   # path_to_data: data/extracted_features/spectrogram_bandwith
   # path_to_data: data/extracted_features/spectrogram_flatness
   # path_to_data: data/extracted_features/spectrogram_rolloff
-  save_model_path: models/fast_cnn
-  epochs: 1
+ 
+  # save_model_path: models/scattering_transform1d
+  save_model_path: models/scattering_transform1d
+  epochs: 25
   algorithm:
     # name: audionet
     # name: fast_cnn
+    # name: audionet
     name: scattering_transform1d
     args:
       n_classes: 10

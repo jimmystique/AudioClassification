@@ -95,18 +95,48 @@ def scattering_transform1d(n_classes, sequence_length):
 	return model
 
 
+def scattering_transform1d_big(n_classes, sequence_length):
+	""" Scattering transform with more parameters
+	"""
+	log_eps = 1e-6
+	x_in = layers.Input(shape=(sequence_length))
+	x = Scattering1D(8, 12)(x_in)
+	x = layers.Lambda(lambda x: x[..., 1:, :])(x)
+	x = layers.Lambda(lambda x: tf.math.log(tf.abs(x) + log_eps))(x)
+	x = layers.GlobalAveragePooling1D(data_format='channels_first')(x)
+	x = layers.BatchNormalization(axis=1)(x)
+	x = layers.Dense(512, activation='softmax')(x)
+	x_out = layers.Dense(n_classes, activation='softmax')(x)
+	model = tf.keras.models.Model(x_in, x_out)
+	return model
+
+
 def train_dl_model(path_to_data, save_model_path, epochs, algorithm):
 	# X_train, X_test, y_train, y_test = split_data(path_to_data, 0.33)
-	X_train, X_test, X_valid, y_train, y_test, y_valid =  split_data(path_to_data, 0.33, 42, 0.3, True)
+	X_train, X_test, X_valid, y_train, y_test, y_valid =  split_data(path_to_data, 0.33, 42, 0.2, True)
+	
+
+	###################################################
+	#NORMALIZE FOR SCATERRING TRANSFORM ONLY
+	row_sums = np.array(X_train).sum(axis=1)
+	X_train = X_train / row_sums[:, np.newaxis]
+
+	row_sums = np.array(X_valid).sum(axis=1)
+	X_valid = X_valid / row_sums[:, np.newaxis]
+
+	row_sums = np.array(X_test).sum(axis=1)
+	X_test = X_test / row_sums[:, np.newaxis]
+	#####################################################
+
 	y_train = to_categorical(y_train)
 	y_test = to_categorical(y_test)
 	y_valid = to_categorical(y_valid)
-
+	
 	model = globals()[algorithm["name"]](**algorithm["args"])
 	model.summary()
 
-	model.compile(optimizer='adam', loss=tf.keras.losses.CategoricalCrossentropy(), metrics=["accuracy"])
-	history = model.fit(np.array(X_train), np.array(y_train), epochs=epochs, validation_data=(np.array(X_valid), np.array(y_valid)))
+	model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=["accuracy"])
+	history = model.fit(np.array(X_train), np.array(y_train), batch_size=128, epochs=epochs, validation_data=(np.array(X_valid), np.array(y_valid)))
 	model.save(save_model_path)
 
 	hist_json_file = os.path.join(save_model_path, 'history.json')
