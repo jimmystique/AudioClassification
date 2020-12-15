@@ -1,5 +1,6 @@
 seed: 42
 test_size: &test_size 0.33
+target_sr: &target_sr 8000
 
 #####################################################################################################
 #
@@ -16,9 +17,22 @@ download_dataset:
 #####################################################################################################
 preprocessing:
   raw_data_path: "data/raw/"
-  preprocessed_data_path: &processed_data_path "data/preprocessed/"
-  target_sr: &target_sr 8000
   n_process: 10
+
+  
+  # FFT pipeline
+  resampling_method: fft
+  preprocessed_data_path: &processed_data_path "data/preprocessed_fft/"
+  vect_size: 8000
+
+
+  # #Downsampling pipeline
+  # resampling_method: downsampling
+  # preprocessed_data_path: &processed_data_path "data/preprocessed_downsampling/"
+  # target_sr: *target_sr
+  # vect_size: 8000
+  
+
 
 #####################################################################################################
 #
