@@ -273,11 +273,11 @@ def extract_features(processed_data_path, save_path, n_processes, algorithm):
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
-    parser.add_argument("-e", "--config_file", default="configs/config.yaml", type=str, help = "Path to the configuration file")
+	parser = argparse.ArgumentParser()
+	parser.add_argument("-e", "--config_file", default="configs/config.yaml", type=str, help = "Path to the configuration file")
 
-    args = parser.parse_args()
-    features_extraction_cfg = yaml.safe_load(open(args.config_file))["features_extraction"]
-    	
-    print(features_extraction_cfg)
-    extract_features(**features_extraction_cfg)
+	args = parser.parse_args()
+	features_extraction_cfg = yaml.safe_load(open(args.config_file))["features_extraction"]
+		
+	print(features_extraction_cfg)
+	extract_features(**features_extraction_cfg)

@@ -19,7 +19,7 @@ preprocessing:
   raw_data_path: "data/raw/"
   n_process: 10
 
-  
+
   # FFT pipeline
   resampling_method: fft
   preprocessed_data_path: &processed_data_path "data/preprocessed_fft/"
@@ -31,7 +31,7 @@ preprocessing:
   # preprocessed_data_path: &processed_data_path "data/preprocessed_downsampling/"
   # target_sr: *target_sr
   # vect_size: 8000
-  
+
 
 
 #####################################################################################################
@@ -41,27 +41,37 @@ preprocessing:
 #####################################################################################################
 
 features_extraction:
+
+  # Pick one pair of processed_data_path / save_path
   ##############################################################################
   # Parameters to extract Chroma features using Short Time Fourier Transform
   ##############################################################################
 
-  #processed_data_path: *processed_data_path
-  #n_processes: 1
-  #save_path: data/extracted_features/chroma_stft
-  #algorithm:
-  #  name: chroma_stft
-  #  args:
-  #    n_fft: 2048
-  #    hop_length: 512
+  processed_data_path: "data/preprocessed_fft/"
+  save_path: data/extracted_features/fft_processing/chroma_stft
+
+  # processed_data_path: "data/preprocessed_downsampling/"
+  # save_path: data/extracted_features/downsampling_processing/chroma_stft
+  
+  n_processes: 1
+  algorithm:
+   name: chroma_stft
+   args:
+     n_fft: 2048
+     hop_length: 512
 
   ##############################################################################
   # Parameters to extract features using Root Mean Square
   ##############################################################################
 
-  #processed_data_path: *processed_data_path
-  #save_path: data/extracted_features/root_mean_square
-  #n_processes: 10
-  #algorithm:
+  # # processed_data_path: "data/preprocessed_fft/"
+  # # save_path: data/extracted_features/fft_processing/root_mean_square
+
+  # processed_data_path: "data/preprocessed_downsampling/"
+  # save_path: data/extracted_features/downsampling_processing/root_mean_square
+
+  # n_processes: 10
+  # algorithm:
   #  name: root_mean_square
   #  args:
   #    frame_length: 2048
@@ -71,10 +81,15 @@ features_extraction:
   # Parameters to extract features using MFCC
   ##############################################################################
 
-  #processed_data_path: *processed_data_path
-  #n_processes: 10
-  #save_path: data/extracted_features/mfcc
-  #algorithm:
+  # # processed_data_path: "data/preprocessed_fft/"
+  # # save_path: data/extracted_features/fft_processing/mfcc
+
+  # processed_data_path: "data/preprocessed_downsampling/"
+  # save_path: data/extracted_features/downsampling_processing/mfcc
+
+
+  # n_processes: 10
+  # algorithm:
   #  name: mfcc
   #  args:
   #    n_mfcc: 20
@@ -84,10 +99,14 @@ features_extraction:
   # Parameters to generate spectrograms
   ##############################################################################
 
-  #processed_data_path: *processed_data_path
-  #n_processes: 10
-  #save_path: data/extracted_features/spectrogram
-  #algorithm:
+  # # processed_data_path: "data/preprocessed_fft/"
+  # # save_path: data/extracted_features/fft_processing/spectrogram
+
+  # processed_data_path: "data/preprocessed_downsampling/"
+  # save_path: data/extracted_features/downsampling_processing/spectrogram
+
+  # n_processes: 10
+  # algorithm:
   #  name: spectrogram
   #  args:
   #    n_fft: 2048
@@ -97,10 +116,14 @@ features_extraction:
   # Parameters to extract features using spectrogram centroid
   ##############################################################################
 
-  #processed_data_path: *processed_data_path
-  #n_processes: 10
-  #save_path: data/extracted_features/spectrogram_centroid
-  #algorithm:
+  # # processed_data_path: "data/preprocessed_fft/"
+  # # save_path: data/extracted_features/fft_processing/spectrogram_centroid
+
+  # processed_data_path: "data/preprocessed_downsampling/"
+  # save_path: data/extracted_features/downsampling_processing/spectrogram_centroid
+
+  # n_processes: 10
+  # algorithm:
   #  name: spectrogram_centroid
   #  args:
   #    n_fft: 2048
@@ -111,10 +134,14 @@ features_extraction:
   # Parameters to extract features using spectrogram bandwith
   ##############################################################################
 
-  #processed_data_path: *processed_data_path
-  #n_processes: 10
-  #save_path: data/extracted_features/spectrogram_bandwith
-  #algorithm:
+  # # processed_data_path: "data/preprocessed_fft/"
+  # # save_path: data/extracted_features/fft_processing/spectrogram_bandwith
+
+  # processed_data_path: "data/preprocessed_downsampling/"
+  # save_path: data/extracted_features/downsampling_processing/spectrogram_bandwith
+
+  # n_processes: 10
+  # algorithm:
   #  name: spectrogram_bandwith
   #  args:
   #    n_fft: 2048
@@ -125,23 +152,30 @@ features_extraction:
   # Parameters to extract features using spectrogram flatness
   ##############################################################################
 
-  #processed_data_path: *processed_data_path
-  #n_processes: 10
-  #save_path: data/extracted_features/spectrogram_flatness
-  #algorithm:
+  # # processed_data_path: "data/preprocessed_fft/"
+  # # save_path: data/extracted_features/fft_processing/spectrogram_flatness
+
+  # processed_data_path: "data/preprocessed_downsampling/"
+  # save_path: data/extracted_features/downsampling_processing/spectrogram_flatness
+
+  # n_processes: 10
+  # algorithm:
   #  name: spectrogram_flatness
   #  args:
   #    n_fft: 2048
   #    hop_length: 512
-  #    sr: *target_sr
 
   ##############################################################################
   # Parameters to extract features using spectrogram rolloff
   ##############################################################################
 
-  processed_data_path: *processed_data_path
+  processed_data_path: "data/preprocessed_fft/"
+  save_path: data/extracted_features/fft_processing/spectrogram_rolloff
+
+  # processed_data_path: "data/preprocessed_downsampling/"
+  # save_path: data/extracted_features/downsampling_processing/spectrogram_rolloff
+
   n_processes: 10
-  save_path: data/extracted_features/spectrogram_rolloff
   algorithm:
     name: spectrogram_rolloff
     args:
@@ -155,17 +189,36 @@ features_extraction:
 #
 #####################################################################################################
 features_based_training:
+  split_path: data/train_val_test_split/extracted_features/downsampling_processing/root_mean_square
+
+
+
+
+  # path_to_data: data/preprocessed_downsampling
+  # path_to_data: data/preprocessed_fft
+
+  # path_to_data: data/extracted_features/downsampling_processing/chroma_stft
+  # path_to_data: data/extracted_features/downsampling_processing/mfcc
+  # path_to_data: data/extracted_features/downsampling_processing/root_mean_square
+  # path_to_data: data/extracted_features/downsampling_processing/spectrogram
+  # path_to_data: data/extracted_features/downsampling_processing/spectrogram_bandwith
+  # path_to_data: data/extracted_features/downsampling_processing/spectrogram_centroid
+  # path_to_data: data/extracted_features/downsampling_processing/spectrogram_flatness
+  # path_to_data: data/extracted_features/downsampling_processing/spectrogram_rolloff
+
+  # path_to_data: data/extracted_features/preprocessed_fft/chroma_stft
+  # path_to_data: data/extracted_features/preprocessed_fft/mfcc
+  # path_to_data: data/extracted_features/preprocessed_fft/root_mean_square
+  # path_to_data: data/extracted_features/preprocessed_fft/spectrogram
+  # path_to_data: data/extracted_features/preprocessed_fft/spectrogram_bandwith
+  # path_to_data: data/extracted_features/preprocessed_fft/spectrogram_centroid
+  # path_to_data: data/extracted_features/preprocessed_fft/spectrogram_flatness
+  # path_to_data: data/extracted_features/preprocessed_fft/spectrogram_rolloff
+
   ##############################################################################
   # Parameters to train models with Random Forest
   ##############################################################################
-  path_to_data: data/extracted_features/mfcc
-  # path_to_data: data/extracted_features/chroma_stft
-  # path_to_data: data/extracted_features/root_mean_square
-  # path_to_data: data/extracted_features/spectrogram
-  # path_to_data: data/extracted_features/spectrogram_centroid
-  # path_to_data: data/extracted_features/spectrogram_bandwith
-  # path_to_data: data/extracted_features/spectrogram_flatness
-  # path_to_data: data/extracted_features/spectrogram_rolloff
+
   save_model_path: models/
   algorithm:
    name: random_forest
